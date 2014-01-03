@@ -45,12 +45,7 @@ class Twilio extends Adapter
   receive_sms: (body, from) ->
     return if body.length is 0
     user = @robot.brain.userForId(from)
-
-		# TODO Assign self.robot.name here instead of 
-    # if body.match(/^Nurph\b/i) is null
-    #   console.log "I'm adding 'Nurph' as a prefix."
-    #   body = 'Nurph' + '' + body
-
+    body = "hubot #{body}"
     @receive new TextMessage user, body
 
   send_sms: (message, to, callback) ->
