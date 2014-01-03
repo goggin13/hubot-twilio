@@ -11,7 +11,8 @@ class Twilio extends Adapter
     @robot = robot
     super robot
 
-  send: (user, strings...) ->
+  send: (envelope, strings...) ->
+    user = envelope.user
     message = strings.join "\n"
 
     @send_sms message, user.id, (err, body) ->
@@ -43,7 +44,7 @@ class Twilio extends Adapter
 
   receive_sms: (body, from) ->
     return if body.length is 0
-    user = @userForId from
+    user = @robot.brain.userForId(from)
 
 		# TODO Assign self.robot.name here instead of 
     # if body.match(/^Nurph\b/i) is null
@@ -56,7 +57,7 @@ class Twilio extends Adapter
     auth = new Buffer(@sid + ':' + @token).toString("base64")
     data = QS.stringify From: @from, To: to, Body: message
 
-    @http("https://api.twilio.com")
+    @robot.http("https://api.twilio.com")
       .path("/2010-04-01/Accounts/#{@sid}/SMS/Messages.json")
       .header("Authorization", "Basic #{auth}")
       .header("Content-Type", "application/x-www-form-urlencoded")
